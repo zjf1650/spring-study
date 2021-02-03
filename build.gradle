@@ -24,8 +24,8 @@ allprojects {
     apply plugin: "maven-publish"
     apply plugin: "net.researchgate.release"
 
-    group='org.one'
-    version='1.0-SNAPSHOT'
+//    group='org.one'
+//    version='1.0-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
