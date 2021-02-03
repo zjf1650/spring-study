@@ -1,3 +1,4 @@
+import net.researchgate.release.GitAdapter
 //plugins {
 //    id "io.spring.dependency-management" version "1.0.11.RELEASE"
 //    id "maven-publish"
@@ -24,15 +25,11 @@ allprojects {
     apply plugin: "maven-publish"
     apply plugin: "net.researchgate.release"
 
-    group='org.one'
-    version='1.4-SNAPSHOT'
+//    group='org.one'
+//    version='1.4-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
-
-//    ext{
-//        PREX_REPO_URL = "http://www.codequick.xyz:8081/repository"
-//    }
 
     repositories {
         mavenLocal()
@@ -55,8 +52,7 @@ allprojects {
         failOnUnversionedFiles = false
 
         scmAdapters = [
-                net.researchgate.release.GitAdapter
-                //GitAdapter
+                GitAdapter
         ]
 
         git {
