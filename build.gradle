@@ -1,0 +1,130 @@
+import net.researchgate.release.GitAdapter
+
+//plugins {
+//    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+//    id "maven-publish"
+//}
+
+buildscript {
+    repositories {
+        maven {
+            url "${PREX_REPO_URL}/maven-public"
+            allowInsecureProtocol true
+        }
+    }
+
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+        classpath "net.researchgate:gradle-release:2.8.1"
+    }
+}
+
+// 在根目录下的build.gradle中添加所有项目的Java依赖
+allprojects {
+    apply plugin: "java"
+    apply plugin: "io.spring.dependency-management"
+    apply plugin: "maven-publish"
+    apply plugin: "net.researchgate.release"
+
+//    group='org.one'
+//    version='1.0-SNAPSHOT'
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+//    ext{
+//        PREX_REPO_URL = "http://www.codequick.xyz:8081/repository"
+//    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "${PREX_REPO_URL}/maven-public"
+            allowInsecureProtocol true
+        }
+//    mavenCentral()
+    }
+
+    dependencyManagement {
+        dependencies {
+            //dependency 'org.springframework:spring-core:5.3.3'
+            dependency 'org.springframework:spring-webmvc:5.3.3'
+        }
+    }
+
+    release {
+        failOnCommitNeeded = false
+        failOnUnversionedFiles = false
+
+        scmAdapters = [
+                //net.researchgate.release.GitAdapter
+                GitAdapter
+        ]
+
+        git {
+            requireBranch = 'master'
+            pushToRemote = 'origin'
+            pushToBranchPrefix = ''
+        }
+    }
+
+    //打包源码
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                //指定group/artifact/version信息，可以不填。默认使用项目group/name/version作为groupId/artifactId/version
+                groupId project.group
+                artifactId project.name
+                version project.version
+                //如果是war包填写components.web，如果是jar包填写components.java
+                from components.java
+
+                //配置上传源码
+                artifact sourceJar {
+                    classifier "sources"
+                }
+
+            }
+        }
+
+        repositories {
+            maven {
+                def releasesRepoUrl = "${PREX_REPO_URL}/maven-releases/"
+                def snapshotsRepoUrl = "${PREX_REPO_URL}/maven-snapshots/"
+                //指定要上传的maven私服仓库
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                allowInsecureProtocol true
+                //认证用户和密码
+                credentials {
+                    username 'deployment'
+                    password 'deployment888'
+                }
+            }
+        }
+    }
+}
+
+// 在根目录的build.gradle中添加所有子项目的logback和Junit依赖
+subprojects {
+    dependencies {
+        implementation 'javax.annotation:javax.annotation-api:1.3.2'
+        compileOnly 'org.projectlombok:lombok:1.18.18'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+        test {
+            useJUnitPlatform()
+        }
+    }
+}
+
+dependencies {
+
+}
+
+
+//uploadArchives{}
+
