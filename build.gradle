@@ -1,4 +1,3 @@
-import net.researchgate.release.GitAdapter
 //plugins {
 //    id "io.spring.dependency-management" version "1.0.11.RELEASE"
 //    id "maven-publish"
@@ -50,9 +49,9 @@ allprojects {
     release {
         failOnCommitNeeded = false
         failOnUnversionedFiles = false
-
+        tagTemplate = 'v${version}'
         scmAdapters = [
-                GitAdapter
+                net.researchgate.release.GitAdapter.GitAdapter
         ]
 
         git {
